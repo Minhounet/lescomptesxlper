@@ -13,6 +13,8 @@ combien chacun doit virer sur les comptes joints, et ce qu'il reste de libre.
 Pour Google Sheets : importer le `.xlsx` dans Drive, puis « Enregistrer sous Google Sheets ».
 Formules et listes déroulantes sont conservées.
 
+Versions, évolutions et migration d'un fichier réel vers un nouveau modèle : voir `MIGRATION.md`.
+
 > **Confidentialité** : ce dépôt est public. Ne jamais y mettre de vraies données (montants, comptes, noms).
 > Seuls les deux modèles ci-dessus y sont versionnés.
 

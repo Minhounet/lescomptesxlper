@@ -6,5 +6,3 @@
 *.csv
 !suivi_comptes_vierge.xlsx
 !suivi_comptes_example.xlsx
-# Instructions locales privées, jamais dans Git
-CLAUDE.md
