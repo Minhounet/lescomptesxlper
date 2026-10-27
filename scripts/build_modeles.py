@@ -96,7 +96,9 @@ comptes = [("Compte Alex", "Personnel", "Alex", "Salaire d'Alex, dépenses perso
            ("Joint Vie courante", "Joint", "Alex & Sam", "Courses, voiture, enfants, aides CAF"),
            ("Joint Abonnements", "Joint", "Alex & Sam", "Internet, streaming, etc."),
            ("Livret A", "Épargne", "Alex & Sam", "Épargne (reçoit des virements)"),
-           ("Livret imprévus", "Épargne", "Alex & Sam", "Provision pour les dépenses imprévues")]
+           ("Livret imprévus", "Épargne", "Alex & Sam", "Provision pour les dépenses imprévues"),
+           ("Livret enfant 1", "Épargne", "Enfant 1", "Épargne de l'enfant 1"),
+           ("Livret enfant 2", "Épargne", "Enfant 2", "Épargne de l'enfant 2")]
 if BLANK: comptes = []
 for r in range(5, 15):
     for c in range(1, 5):
@@ -129,6 +131,8 @@ ch = [("Emprunt immobilier", "Logement", "Fixe", "Mensuelle", 1150, "Prélèveme
       ("Médecin / pharmacie (provision)", "Santé", "Variable", "Mensuelle", 30, "Chèque", "Joint Vie courante", None, None, "50/50"),
       ("Cadeaux & fêtes (enveloppe lissée)", "Loisirs", "Variable", "Annuelle", 500, "Carte", "Joint Vie courante", None, None, "50/50"),
       ("Provision imprévus (% des salaires)", "Imprévus", "Variable", "Mensuelle", "=PROV", "Virement", "Joint Vie courante", "Livret imprévus", 3, "50/50"),
+      ("Épargne enfant 1", "Épargne", "Fixe", "Mensuelle", 50, "Virement", "Joint Vie courante", "Livret enfant 1", 4, "50/50"),
+      ("Épargne enfant 2", "Épargne", "Fixe", "Mensuelle", 50, "Virement", "Joint Vie courante", "Livret enfant 2", 4, "50/50"),
       ("Aide à domicile (retrait espèces)", "Services", "Fixe", "Mensuelle", 120, "Espèces", "Joint Vie courante", None, 1, "50/50"),
       ("Argent de poche enfants (retrait espèces)", "Enfants", "Fixe", "Mensuelle", 30, "Espèces", "Joint Vie courante", None, 1, "50/50"),
       ("Marché & petits commerces (retrait espèces)", "Vie courante", "Variable", "Mensuelle", 60, "Espèces", "Joint Vie courante", None, None, "50/50")]
