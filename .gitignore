@@ -1,0 +1,10 @@
+# Dépôt public : seuls les modèles (vierge + exemple) sont versionnés.
+# Toute autre feuille de calcul (données réelles) est exclue.
+*.xlsx
+*.xls
+*.ods
+*.csv
+!suivi_comptes_vierge.xlsx
+!suivi_comptes_example.xlsx
+# Instructions locales privées, jamais dans Git
+CLAUDE.md
