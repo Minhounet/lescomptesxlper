@@ -31,7 +31,7 @@ Convention : cellules **jaunes à police bleue = à saisir**, tout le reste est 
 
 1. **Synthèse** (rien à saisir)
    - *Par personne* : salaires, participations aux comptes joints, taux d'effort, charges perso, épargne, **reste libre**.
-   - *Par compte* : charges, aides reçues, **« À virer par … »** chaque mois pour alimenter chaque compte joint, solde prévisionnel.
+   - *Par compte* : charges, aides reçues, **« À virer par … »** chaque mois pour alimenter chaque compte joint, solde prévisionnel (pour un compte perso, charges perso et épargne perso comprises).
    - *Fixe vs variable* : répartition des charges communes entre fixes et variables.
 2. **Paramètres** : prénoms, compte perso de chacun, périodicités, part de chacun dans les salaires (prorata),
    budget perso (mode des charges perso, épargne en % ou en montant), % de provision pour imprévus.
@@ -42,6 +42,7 @@ Convention : cellules **jaunes à police bleue = à saisir**, tout le reste est 
 5. **Revenus** : salaires (sur le compte de chacun) et aides type CAF (sur le compte de votre choix).
 6. **Charges perso** : dépenses propres à chacun. Mode *Détail* : les lignes sont additionnées ;
    mode *Forfait* (Paramètres) : une somme arbitraire, le détail reste privé.
+   Chaque ligne est imputée à son « compte débité », ou à défaut au compte perso de la personne (le forfait et l'épargne perso aussi).
 7. **Imprévus** : journal des dépenses imprévues comparé à la provision mensuelle (livret dédié) ; le solde se met à jour seul.
 
 ## Bonnes pratiques
@@ -57,7 +58,7 @@ Convention : cellules **jaunes à police bleue = à saisir**, tout le reste est 
 5. Optionnel : Charges perso, épargne perso, Imprévus.
 6. Lire la Synthèse et programmer les virements « À virer par … » vers chaque compte joint.
 
-Un compte joint à solde 0 est équilibré. Un compte perso à solde positif = reste après charges communes (avant charges perso et épargne perso) ; négatif = le salaire ne suffit pas.
+Un compte joint à solde 0 est équilibré. Un compte perso à solde positif = ce qu'il reste après charges communes, charges perso et épargne perso ; négatif = le salaire ne suffit pas.
 
 ## Hypothèses et limites
 

@@ -3,7 +3,7 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.worksheet.datavalidation import DataValidation
 
 import sys, os
-VERSION = "1.0.1"
+VERSION = "1.1.0"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BLANK = len(sys.argv) > 1 and sys.argv[1] == "blank"
 N1, N2 = ("Personne 1", "Personne 2") if not BLANK else ("Personne 1", "Personne 2")
@@ -189,8 +189,8 @@ wr.freeze_panes = "B5"
 
 # ---------- Charges perso
 wcp = wb.create_sheet("Charges perso")
-title(wcp, "Charges personnelles (facultatif)", "Dépenses propres à chacun. Utilisé seulement si le mode « Détail » est choisi pour la personne dans Paramètres.")
-header(wcp, 4, ["Libellé", "Personne", "Catégorie", "Périodicité", "Montant (€ par période)", "Montant mensuel", "Mode de paiement", "Compte débité", "Jour du mois"])
+title(wcp, "Charges personnelles (facultatif)", "Dépenses propres à chacun. Utilisé seulement si le mode « Détail » est choisi pour la personne dans Paramètres. Compte débité : si vide, la dépense est imputée au compte perso de la personne.")
+header(wcp, 4, ["Libellé", "Personne", "Catégorie", "Périodicité", "Montant (€ par période)", "Montant mensuel", "Mode de paiement", "Compte débité", "Jour du mois", "Compte imputé (calculé)"])
 cp_ex = [("Salle de sport", "Alex", "Loisirs", "Mensuelle", 35, "Prélèvement", "Compte Alex", 10),
          ("Coiffeur", "Alex", "Soins", "Trimestrielle", 120, "Carte", "Compte Alex", None),
          ("Abonnement musique", "Alex", "Abonnements", "Mensuelle", 11, "Prélèvement", "Compte Alex", 15)]
@@ -200,11 +200,13 @@ for r in range(5, 45):
     for c, v in zip((1, 2, 3, 4, 5, 7, 8, 9), d):
         style(wcp.cell(r, c, v), inp=True, fmt=EUR if c == 5 else None)
     wcp.cell(r, 6, f'=IF(A{r}="","",IFERROR(E{r}/INDEX({P}$E$4:$E$7,MATCH(D{r},{P}$D$4:$D$7,0)),0))'); style(wcp.cell(r, 6), fmt=EUR)
+    wcp.cell(r, 10, f'=IF(OR($A{r}="",AND($B{r}<>{P}$B$4,$B{r}<>{P}$B$5)),"",IF(IF($B{r}={P}$B$4,{P}$B$15,{P}$C$15)="Forfait","",'
+                    f'IF($H{r}<>"",$H{r},IF($B{r}={P}$B$4,{P}$B$6,{P}$B$7))))'); style(wcp.cell(r, 10))
 wcp["A45"] = "TOTAL mensuel"; wcp["A45"].font = Font(name=F, bold=True)
 wcp["F45"] = "=SUM(F5:F44)"; style(wcp["F45"], fmt=EUR, bold=True); wcp["F45"].fill = TOT
 for rng, f in [("G5:G44", '"Prélèvement,Carte,Chèque,Espèces,Virement"'), ("H5:H44", "Comptes!$A$5:$A$14"), ("B5:B44", P + "$B$4:$B$5"), ("D5:D44", '"Mensuelle,Trimestrielle,Semestrielle,Annuelle"')]:
     v = DataValidation(type="list", formula1=f, allow_blank=True); wcp.add_data_validation(v); v.add(rng)
-widths(wcp, {"A": 32, "B": 12, "C": 14, "D": 14, "E": 14, "F": 13, "G": 16, "H": 20, "I": 9})
+widths(wcp, {"A": 32, "B": 12, "C": 14, "D": 14, "E": 14, "F": 13, "G": 16, "H": 20, "I": 9, "J": 22})
 wcp.freeze_panes = "A5"
 
 # ---------- Imprévus
@@ -268,7 +270,7 @@ ws["A10"] = ("Un compte joint est alimenté par les virements des deux personnes
 ws["A10"].font = Font(name=F, size=9, italic=True, color="595959")
 header(ws, 12, ["Compte", "Type", "Charges débitées / virements émis", "Aides & autres recettes reçues", None, None,
                 "Salaires reçus", "Virements reçus (d'autres comptes)", "Participations versées (vers comptes joints)",
-                "Solde mensuel prévisionnel"])
+                "Solde avant charges perso", "Charges perso & épargne perso débitées", "Solde mensuel prévisionnel"])
 ws["E12"] = '="À virer par "&' + P + '$B$4'; ws["F12"] = '="À virer par "&' + P + '$B$5'
 for i in range(10):
     r = 13 + i; cr = 5 + i
@@ -283,11 +285,15 @@ for i in range(10):
     ws.cell(r, 8, f'=IF($A{r}="","",SUMIFS(Charges!$F$5:$F$54,Charges!$I$5:$I$54,$A{r},Charges!$G$5:$G$54,"Virement"))')
     ws.cell(r, 9, f'=IF($A{r}="","",IF($A{r}={P}$B$6,SUM($E$13:$E$22),IF($A{r}={P}$B$7,SUM($F$13:$F$22),0)))')
     ws.cell(r, 10, f'=IF($A{r}="","",G{r}+D{r}+H{r}+IF(B{r}="Joint",E{r}+F{r},0)-C{r}-I{r})')
-    for c in range(1, 11): style(ws.cell(r, c), fmt=None if c <= 2 else EUR)
+    ws.cell(r, 11, f'=IF($A{r}="","",SUMIFS(\'Charges perso\'!$F$5:$F$44,\'Charges perso\'!$J$5:$J$44,$A{r})'
+                   f'+IF(AND($A{r}={P}$B$6,{P}$B$15="Forfait"),{P}$B$16,0)+IF(AND($A{r}={P}$B$7,{P}$C$15="Forfait"),{P}$C$16,0)'
+                   f'+IF($A{r}={P}$B$6,$J$5,0)+IF($A{r}={P}$B$7,$J$6,0))')
+    ws.cell(r, 12, f'=IF($A{r}="","",J{r}-K{r})')
+    for c in range(1, 13): style(ws.cell(r, c), fmt=None if c <= 2 else EUR)
     for c in (5, 6): ws.cell(r, c).font = Font(name=F, size=10, bold=True)
 ws["A23"] = "Total"
-for col in "CDEFGHIJ": ws[f"{col}23"] = f"=SUM({col}13:{col}22)"
-for c in range(1, 11):
+for col in "CDEFGHIJKL": ws[f"{col}23"] = f"=SUM({col}13:{col}22)"
+for c in range(1, 13):
     style(ws.cell(23, c), fmt=None if c <= 2 else EUR, bold=True); ws.cell(23, c).fill = TOT
 ws["A27"] = "3. Charges communes : fixe vs variable (mensuel)"; ws["A27"].font = Font(name=F, bold=True, size=11, color="1F3864")
 for i, (l, k) in enumerate([("Fixe", "Fixe"), ("Variable / estimé", "Variable")]):
@@ -297,11 +303,11 @@ for i, (l, k) in enumerate([("Fixe", "Fixe"), ("Variable / estimé", "Variable")
 ws["A30"] = "Total"; ws["B30"] = "=B28+B29"; ws["C30"] = "=C28+C29"
 style(ws["A30"], bold=True); style(ws["B30"], fmt=EUR, bold=True); style(ws["C30"], fmt=PCT, bold=True)
 for c in "ABC": ws[f"{c}30"].fill = TOT
-ws["A25"] = ("Lecture : un compte joint à solde 0 est équilibré. Un compte perso à solde positif = reste après charges communes (avant charges perso et épargne perso, voir tableau 1) ; "
-             "négatif = salaire insuffisant. Un compte d'épargne affiche les virements reçus ce mois. "
+ws["A25"] = ("Lecture : un compte joint à solde 0 est équilibré. Un compte perso à solde positif = ce qu'il reste après charges communes, charges perso (détail ou forfait) et épargne perso, "
+             "imputées à ce compte (compte débité de la ligne, sinon le compte perso) ; négatif = salaire insuffisant. Un compte d'épargne affiche les virements reçus ce mois. "
              "Les aides sont réparties sur les deux personnes au prorata de leurs parts de charges (hypothèse).")
 ws["A25"].font = Font(name=F, size=9, italic=True, color="595959")
-widths(ws, {"A": 24, "B": 14, "C": 18, "D": 20, "E": 16, "F": 16, "G": 18, "H": 18, "I": 20, "J": 18, "K": 18})
+widths(ws, {"A": 24, "B": 14, "C": 18, "D": 20, "E": 16, "F": 16, "G": 18, "H": 18, "I": 20, "J": 18, "K": 20, "L": 18})
 ws.row_dimensions[4].height = 55; ws.row_dimensions[12].height = 55
 
 out = os.path.join(ROOT, "suivi_comptes_vierge.xlsx" if BLANK else "suivi_comptes_example.xlsx")

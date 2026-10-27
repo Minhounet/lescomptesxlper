@@ -18,7 +18,7 @@ Le modèle est versionné (`Paramètres!B25`, format `majeur.mineur.correctif`).
 | Comptes | A5:D14 |
 | Charges | A5:E54, G5:K54 (F, L, M, N sont calculées) |
 | Revenus | A5:E24, G5:H24 |
-| Charges perso | A5:E44, G5:I44 |
+| Charges perso | A5:E44, G5:I44 (J « Compte imputé » est calculée) |
 | Imprévus | B5:B6, A13:D62 |
 
 ## Migrer un fichier réel
@@ -27,5 +27,6 @@ hors du dépôt. Puis rouvrir dans Excel/Sheets (recalcul) et comparer la Synth�
 Pour un changement **majeur**, adapter d'abord `ZONES` à l'ancienne structure (table de correspondance) avant de lancer.
 
 ## Historique
+- **1.1.0** : le solde des comptes perso (Synthèse, tableau « Par compte ») tient compte des charges perso (détail ou forfait) et de l'épargne perso : colonnes J « Solde avant charges perso », K « Charges perso & épargne perso débitées », L « Solde mensuel prévisionnel » ; colonne calculée J « Compte imputé » dans Charges perso (à ne pas migrer). Zones de saisie inchangées.
 - **1.0.1** : textes d'aide corrigés ; le modèle vierge contient la ligne « Provision imprévus » (montant = % de Paramètres × salaires, à 0 par défaut). Zones de saisie inchangées.
 - **1.0.0** : première version (Synthèse, Paramètres, Comptes, Charges, Revenus, Charges perso, Imprévus).
