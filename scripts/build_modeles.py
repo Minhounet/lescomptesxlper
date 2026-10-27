@@ -3,7 +3,7 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.worksheet.datavalidation import DataValidation
 
 import sys, os
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BLANK = len(sys.argv) > 1 and sys.argv[1] == "blank"
 N1, N2 = ("Personne 1", "Personne 2") if not BLANK else ("Personne 1", "Personne 2")
@@ -50,7 +50,7 @@ wp["A9"].font = Font(name=F, size=10, bold=True); wp["A9"].alignment = Alignment
 wp["B9"] = ('=IFERROR(SUMIFS(Revenus!$F$5:$F$24,Revenus!$B$5:$B$24,"Salaire",Revenus!$C$5:$C$24,$B$4)'
             '/SUMIFS(Revenus!$F$5:$F$24,Revenus!$B$5:$B$24,"Salaire"),0.5)')
 style(wp["B9"], fmt="0.0%")
-wp["A10"] = "Hypothèse : 50 % si aucun salaire n'est saisi."; wp["A10"].font = Font(name=F, size=9, italic=True, color="595959")
+wp["A10"] = "Hypothèse : 50 % si aucun salaire n'est saisi. Le prénom des salaires (onglet Revenus) doit être identique à celui saisi plus haut."; wp["A10"].font = Font(name=F, size=9, italic=True, color="595959")
 wp["D3"] = "Périodicité"; wp["E3"] = "Nb de mois"
 for c in (wp["D3"], wp["E3"]): c.font = Font(name=F, bold=True, size=10)
 for r, (p, n) in enumerate([("Mensuelle", 1), ("Trimestrielle", 3), ("Semestrielle", 6), ("Annuelle", 12)], 4):
@@ -63,7 +63,7 @@ for c in (wp["B14"], wp["C14"]): c.font = Font(name=F, bold=True, size=10); c.al
 rows = [("Charges perso : mode (Détail = onglet « Charges perso » ; Forfait = somme arbitraire)", "Détail", "Forfait", None),
         ("Forfait charges perso (€/mois), utilisé si mode Forfait", 0, 350, EUR),
         ("Épargne perso : mode (Pourcentage ou Montant)", "Pourcentage", "Montant", None),
-        ("Épargne perso : pourcentage du reste (si Pourcentage)", 0.3, 0, "0%"),
+        ("Épargne perso : pourcentage du reste après charges perso (si Pourcentage)", 0.3, 0, "0%"),
         ("Épargne perso : montant €/mois (si Montant)", 0, 200, EUR)]
 if BLANK:
     rows = [(l, a if isinstance(a, str) else 0, b if isinstance(b, str) else 0, f) for l, a, b, f in rows]
@@ -77,7 +77,7 @@ wp["A20"] = "Si l'un de vous ne veut pas détailler ses comptes : mode Forfait +
 wp["A20"].font = Font(name=F, size=9, italic=True, color="595959")
 wp["A22"] = "Provision imprévus (% des salaires du foyer)"; wp["A22"].font = Font(name=F, bold=True, size=10)
 style(wp["B22"], inp=True, fmt="0.0%"); wp["B22"] = 0 if BLANK else 0.03
-wp["A23"] = "Alimente la ligne « Provision imprévus » de l'onglet Charges (réparties 50/50, sur le compte joint indiqué)."
+wp["A23"] = "Le montant de la ligne « Provision imprévus » de l'onglet Charges vaut ce pourcentage × les salaires mensuels du foyer. Les comptes (débité et destinataire) et la répartition de cette ligne sont à régler dans Charges."
 wp["A23"].font = Font(name=F, size=9, italic=True, color="595959")
 wp["A25"] = "Version du modèle"; wp["A25"].font = Font(name=F, size=10, bold=True)
 wp["B25"] = VERSION; style(wp["B25"])
@@ -88,7 +88,7 @@ wp.row_dimensions[9].height = 30
 
 # ---------- Comptes
 wc = wb.create_sheet("Comptes")
-title(wc, "Comptes bancaires", "Paramétrez ici vos comptes (10 lignes). Le nom saisi ici alimente les listes déroulantes des autres onglets.")
+title(wc, "Comptes bancaires", "Paramétrez ici vos comptes (10 lignes). Le nom saisi ici alimente les listes déroulantes des autres onglets. Si vous renommez un compte, corrigez-le aussi dans les lignes déjà saisies.")
 header(wc, 4, ["Nom du compte", "Type", "Titulaire(s)", "Usage"])
 comptes = [("Compte Alex", "Personnel", "Alex", "Salaire d'Alex, dépenses perso"),
            ("Compte Sam", "Personnel", "Sam", "Salaire de Sam, dépenses perso"),
@@ -136,7 +136,7 @@ ch = [("Emprunt immobilier", "Logement", "Fixe", "Mensuelle", 1150, "Prélèveme
       ("Aide à domicile (retrait espèces)", "Services", "Fixe", "Mensuelle", 120, "Espèces", "Joint Vie courante", None, 1, "50/50"),
       ("Argent de poche enfants (retrait espèces)", "Enfants", "Fixe", "Mensuelle", 30, "Espèces", "Joint Vie courante", None, 1, "50/50"),
       ("Marché & petits commerces (retrait espèces)", "Vie courante", "Variable", "Mensuelle", 60, "Espèces", "Joint Vie courante", None, None, "50/50")]
-if BLANK: ch = []
+if BLANK: ch = [("Provision imprévus (% des salaires)", "Imprévus", "Variable", "Mensuelle", "=PROV", "Virement", None, None, None, "50/50")]
 for r in range(5, 55):
     d = ch[r-5] if r-5 < len(ch) else None
     vals = [d[0], d[1], d[2], d[3], d[4], None, d[5], d[6], d[7], d[8], d[9]] if d else [None]*11
@@ -164,7 +164,7 @@ wch.freeze_panes = "B5"
 
 # ---------- Revenus
 wr = wb.create_sheet("Revenus")
-title(wr, "Revenus et aides", "Salaires (arrivent sur le compte de chacun) et aides type CAF (peuvent arriver sur un compte joint). 20 lignes.")
+title(wr, "Revenus et aides", "Salaires (arrivent sur le compte de chacun) et aides type CAF (peuvent arriver sur un compte joint). 20 lignes. Colonne Personne : prénom identique à Paramètres (obligatoire pour un salaire), ou « Commun ».")
 header(wr, 4, ["Libellé", "Type", "Personne", "Montant (€ par période)", "Périodicité", "Montant mensuel", "Compte de réception", "Jour du mois"])
 rv = [("Salaire Alex", "Salaire", "Alex", 2400, "Mensuelle", "Compte Alex", 28),
       ("Salaire Sam", "Salaire", "Sam", 1900, "Mensuelle", "Compte Sam", 30),
@@ -211,7 +211,7 @@ wcp.freeze_panes = "A5"
 from datetime import date
 wi = wb.create_sheet("Imprévus")
 title(wi, "Suivi des imprévus", "Notez chaque dépense imprévue ici (date, libellé, montant). Le solde de la provision se met à jour tout seul.")
-lab = [("Provision mensuelle (ligne « Imprévus » de Charges)", '=SUMIFS(Charges!$F$5:$F$54,Charges!$B$5:$B$54,"Imprévus")', EUR, False),
+lab = [("Provision mensuelle (somme des lignes de catégorie « Imprévus » dans Charges)", '=SUMIFS(Charges!$F$5:$F$54,Charges!$B$5:$B$54,"Imprévus")', EUR, False),
        ("Début du suivi (1er du mois)", None if BLANK else date(2026, 9, 1), "dd/mm/yyyy", True),
        ("Solde de départ du livret imprévus", 0, EUR, True),
        ("Mois provisionnés (mois en cours inclus)", '=IF(B5="",0,MAX(0,(YEAR(TODAY())-YEAR(B5))*12+MONTH(TODAY())-MONTH(B5)+1))', "0", False),
@@ -239,7 +239,7 @@ wi.freeze_panes = "A13"
 
 # ---------- Synthèse
 ws = wb.create_sheet("Synthèse", 0)
-title(ws, "Synthèse mensuelle", "Tout est calculé à partir des onglets Charges, Revenus et Comptes. Ne rien saisir ici.")
+title(ws, "Synthèse mensuelle", "Tout est calculé à partir des autres onglets (Paramètres, Comptes, Charges, Revenus, Charges perso). Ne rien saisir ici.")
 ws["A3"] = "1. Par personne"; ws["A3"].font = Font(name=F, bold=True, size=11, color="1F3864")
 header(ws, 4, ["Personne", "Salaires mensuels", "Participations aux comptes joints", "Charges payées directement (compte perso)",
                "Total charges supportées", "Taux d'effort", "Reste après charges communes",
@@ -297,7 +297,8 @@ for i, (l, k) in enumerate([("Fixe", "Fixe"), ("Variable / estimé", "Variable")
 ws["A30"] = "Total"; ws["B30"] = "=B28+B29"; ws["C30"] = "=C28+C29"
 style(ws["A30"], bold=True); style(ws["B30"], fmt=EUR, bold=True); style(ws["C30"], fmt=PCT, bold=True)
 for c in "ABC": ws[f"{c}30"].fill = TOT
-ws["A25"] = ("Lecture : un compte joint à solde 0 est équilibré. Un compte perso à solde positif = reste à vivre ; négatif = salaire insuffisant. "
+ws["A25"] = ("Lecture : un compte joint à solde 0 est équilibré. Un compte perso à solde positif = reste après charges communes (avant charges perso et épargne perso, voir tableau 1) ; "
+             "négatif = salaire insuffisant. Un compte d'épargne affiche les virements reçus ce mois. "
              "Les aides sont réparties sur les deux personnes au prorata de leurs parts de charges (hypothèse).")
 ws["A25"].font = Font(name=F, size=9, italic=True, color="595959")
 widths(ws, {"A": 24, "B": 14, "C": 18, "D": 20, "E": 16, "F": 16, "G": 18, "H": 18, "I": 20, "J": 18, "K": 18})

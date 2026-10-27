@@ -26,6 +26,7 @@
 - **Toute modification du modèle, des exemples ou des scripts entraîne la mise à jour, dans le même commit,
   de `README.md`, `CLAUDE.md` et `MIGRATION.md` si concernés** (fonctionnement, conventions, zones de saisie,
   version, historique). Ne jamais l'oublier ; relire ces trois fichiers avant de commiter.
+- **Textes d'aide** (sous-titres, notes, README) : vérifier à chaque évolution qu'ils décrivent exactement le comportement réel du fichier.
 - Lire `MIGRATION.md` avant toute évolution : versionnement (`Paramètres!B25`), zones de saisie, `scripts/build_modeles.py`
   (génère vierge + example) et `scripts/migrer.py`. Le tenir à jour à chaque changement de structure.
 - Migration d'un fichier réel : hors Git, vers la dernière version du modèle.

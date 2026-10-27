@@ -27,4 +27,5 @@ hors du dépôt. Puis rouvrir dans Excel/Sheets (recalcul) et comparer la Synth�
 Pour un changement **majeur**, adapter d'abord `ZONES` à l'ancienne structure (table de correspondance) avant de lancer.
 
 ## Historique
+- **1.0.1** : textes d'aide corrigés ; le modèle vierge contient la ligne « Provision imprévus » (montant = % de Paramètres × salaires, à 0 par défaut). Zones de saisie inchangées.
 - **1.0.0** : première version (Synthèse, Paramètres, Comptes, Charges, Revenus, Charges perso, Imprévus).
