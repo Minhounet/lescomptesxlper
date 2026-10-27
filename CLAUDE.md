@@ -2,7 +2,7 @@
 
 ## Confidentialité (règle absolue)
 - Le dépôt GitHub est PUBLIC. Ne jamais y commiter de données réelles
-  (montants, noms, comptes, IBAN, salaires), ni ce fichier CLAUDE.md.
+  (montants, noms, comptes, IBAN, salaires).
 - Seuls les modèles `suivi_comptes_vierge.xlsx` et `suivi_comptes_example.xlsx` sont versionnés ;
   ils ne contiennent que des données fictives (Alex et Sam).
 - Ce fichier est versionné (il ne contient aucune donnée personnelle). Les fichiers réels restent hors Git
