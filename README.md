@@ -44,6 +44,13 @@ Convention : cellules **jaunes à police bleue = à saisir**, tout le reste est 
    mode *Forfait* (Paramètres) : une somme arbitraire, le détail reste privé.
 7. **Imprévus** : journal des dépenses imprévues comparé à la provision mensuelle (livret dédié) ; le solde se met à jour seul.
 
+## Bonnes pratiques
+
+- Centraliser : chacun vire sur le compte joint principal, qui alimente ensuite les autres comptes
+  (livrets des enfants, épargne, provision imprévus) par virements automatiques.
+- Lisser : enveloppes annuelles pour les dépenses irrégulières, provision imprévus en % des salaires.
+- Liquide commun : un retrait mensuel depuis le compte joint (mode « Espèces »).
+
 ## Utilisation
 
 1. Paramètres → prénoms et comptes perso. 2. Comptes. 3. Revenus. 4. Charges.

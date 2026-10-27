@@ -19,8 +19,13 @@
 - Formules compatibles Excel, LibreOffice et Google Sheets (SUMIFS, INDEX/MATCH, IFERROR) ;
   pas de XLOOKUP, FILTER, etc. Recalculer et vérifier 0 erreur avant de livrer.
 - Deux personnes exactement ; une charge = un compte débité.
+- Principe de conception : centraliser sur les comptes joints et lisser (enveloppes annuelles, provision imprévus),
+  ex. épargne enfants = virement du compte joint principal vers un livret par enfant.
 
 ## Évolutions et migrations
+- **Toute modification du modèle, des exemples ou des scripts entraîne la mise à jour, dans le même commit,
+  de `README.md`, `CLAUDE.md` et `MIGRATION.md` si concernés** (fonctionnement, conventions, zones de saisie,
+  version, historique). Ne jamais l'oublier ; relire ces trois fichiers avant de commiter.
 - Lire `MIGRATION.md` avant toute évolution : versionnement (`Paramètres!B25`), zones de saisie, `scripts/build_modeles.py`
   (génère vierge + example) et `scripts/migrer.py`. Le tenir à jour à chaque changement de structure.
 - Migration d'un fichier réel : hors Git, vers la dernière version du modèle.
